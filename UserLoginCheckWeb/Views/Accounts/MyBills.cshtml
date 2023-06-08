@@ -1,0 +1,185 @@
+﻿@model List<CustomerPortal.Models.BillDetails>
+@{
+    ViewData["Title"] = "Bills";
+    Layout = "~/Views/Shared/_DashboardLayout.cshtml";
+}
+<link rel="stylesheet" href="~/css/AddAccounts.css" />
+<link href='https://fonts.googleapis.com/css?family=Roboto:400,300,100' rel='stylesheet' type='text/css'>
+
+
+@*@foreach (var item in Model)
+{
+    count++;
+}*@
+@{
+    if (Model.Count > 0)
+    {
+        <h3>MY BILLS</h3>
+        <div class="add-bills-container text-right" style="margin-bottom: 20px;">
+            <a asp-action="AddBills" asp-controller="Accounts"
+               asp-route-token="@ViewBag.token" asp-route-accountID="@ViewBag.accountID">
+                <button type="button" class="btn btn-outline-danger"><i class="fa fa-plus-circle" aria-hidden="true"></i> Add Bill</button>
+            </a>
+            
+        </div>
+        <form asp-action="ProcessSelectedBills" asp-controller="ControllerName" method="post">
+            <table class="table table-bordered table-hover">
+                <thead class="bg-primary text-white">
+                    <tr>
+                        <th>
+                            Select
+                        </th>
+                        <th>
+                            Bill Type
+                        </th>
+                        <th>
+                            Bill Generation Date
+                        </th>
+                        <th>
+                            Bill Due Date
+                        </th>
+                        <th>
+                            Bill Amount
+                        </th>
+                        <th>
+                            Bill Status
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    
+                    @for (int i = 0; i < Model.Count; i++)
+                    {
+                            <tr>
+                            <td>
+                                <span id="sumCheckboxes">
+                                <input  type="checkbox" asp-for="@Model[i].isSelected" value="@Model[i].BillAmount" />
+                                </span>
+
+                            </td>
+                                <td>
+                                    @Model[i].BillType
+                                </td>
+                                <td>
+                                    @Model[i].BillGenerationDate
+                                </td>
+                                <td>
+                                    @Model[i].BillDueDate
+                                </td>
+                                <td>
+                                    @Model[i].BillAmount
+                                </td>
+                                <td>
+                                    @Model[i].BillStatus
+                                </td>
+                            </tr>
+                    }
+                </tbody>
+            </table>
+            Total Amount : <span id="displaysum">0</span>
+            
+            <br>            
+            <br>
+            <input class="btn btn-primary" type="submit" value="Pay Now" />
+        </form>
+    }
+    else
+    {
+        <div class="accounts">
+            <div class="accounts-container">
+
+                <div class="accounts-inner-container">
+                    <h1 class="no-account-head">You do not have any bills added!</h1>
+                    <a class="add-account-link" asp-action="AddBills" asp-controller="Accounts"
+               asp-route-token="@ViewBag.token" asp-route-accountID="@ViewBag.accountID">
+                        <button class="btn btn-info add-account-btn">
+                            <i class="fa-solid fa-square-plus"></i>
+                            Add Bills
+                        </button>
+                    </a>
+                </div>
+
+            </div>
+
+        </div>
+    }
+}
+
+@*<div class="card mx-auto" style="width: 70%;">
+    <div class="card-body">
+        <div class="container">
+            <div class="Account">
+                <div class="card-body">
+                    <form asp-action="AddAccounts" asp-controller="Accounts">
+                        <div class="form-group">
+                            <label for="checkout_Account_number">Bill ID</label><br />
+                            <div>
+                                <input type="number"  class="form-control stripe_account_number" id="checkout_bill_id" placeholder="Bill ID" required />
+                                <div class="invalid-feedback">
+                                    Bill ID can't be empty
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="form-group">
+                        <div class="form-row">
+                            <div class="col">
+                                <label>Bill Type</label>
+                                <select class="form-control">
+                                    <option value="Electricity">Electricity</option>
+                                    <option value="Water">Water</option>
+                                    <option value="Mobile">Mobile</option>
+                                    <option value="DTH">DTH</option>
+                                    <option value="Gas">Gas</option>
+                                    <option value="Broadband">Broadband</option>
+                                    <option value="Metro">Metro</option>
+                                </select>
+                            </div>
+
+                        </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="form-row">
+                                <div class="col">
+
+                                    <label for="generation-date">Bill Generation Date:</label>
+                                    <input type="date" id="generation-date" name="generation-date">
+
+                                </div>
+                                <div class="col">
+                                    <label for="event-date">Bill Due Date:</label>
+                                    <input type="date" id="due-date" name="due-date">
+                                </div>
+
+
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="bill-amount">Bill Amount:</label>
+                            <input type="number" id="bill-amount" name="bill-amount" min="0" step="1">
+                        </div>
+
+                        <br />
+                        <div class="form-group text-center">
+                            <input type="submit" value="Submit" class="btn btn-primary btn-user btn-block" />
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>*@
+<script>
+    $('input[type="checkbox"]').on('click', calculateSum);
+    // Function to calculate the sum of selected checkboxes
+    function calculateSum() {
+        var sum = 0;
+        $('input[type="checkbox"]:checked').each(function () {
+            sum += parseFloat($(this).val());
+        });
+        $('#displaysum').text(sum); // Display the sum
+    }
+</script>
+
+<script src="~/js/CardValidations.js"></script>

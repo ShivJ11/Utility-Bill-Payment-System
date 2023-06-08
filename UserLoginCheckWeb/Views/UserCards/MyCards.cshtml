@@ -1,0 +1,129 @@
+﻿@model List<CustomerPortal.Models.CardDetails>
+@{
+    ViewData["Title"] = "My Cards";
+    Layout = "~/Views/Shared/_DashboardLayout.cshtml";
+}
+<link rel="stylesheet" href="~/css/MyCards.css" />
+
+@*<div class="cards">
+    <div class="cards-container">
+
+        <div class="cards-inner-container">
+            <h1 class="no-card-head">You do not have any cards added!</h1>
+            <a class="add-card-link" asp-action="Index" asp-controller="UserCards"
+               asp-route-token="@ViewBag.token">
+                <button class="btn btn-info add-card-btn">
+                    <i class="fa-solid fa-square-plus"></i>
+                    Add Cards
+                </button>
+            </a>
+        </div>
+    </div>
+</div>*@
+
+
+<h3>PAYMENT METHODS</h3>
+@if(Model.Count > 0)
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th scope="col">Method</th>
+                <th scope="col">Expires</th>
+                
+                
+            </tr>
+        </thead>
+        <tbody>
+            @foreach(var card in Model)
+            {
+                <tr>
+                    <th scope="row"><img class="card-type-logo" src="@Url.Content(card.Path)" /> **** **** **** @card.CardNumber</th>
+                    <td>@card.CardExpMonth/@card.CardExpYear</td>
+                </tr>
+            }
+            
+            
+        </tbody>
+    </table>
+} else
+{
+    <div class="cards">
+        <div class="cards-container">
+            <div class="cards-inner-container">
+                <h1 class="no-card-head">You do not have any cards added!</h1>
+                <a class="add-card-link" asp-action="Index" asp-controller="UserCards"
+               asp-route-token="@ViewBag.token">
+                    <button class="btn btn-info add-card-btn">
+                        <i class="fa-solid fa-square-plus"></i>
+                        Add Cards
+                    </button>
+                </a>
+            </div>
+        </div>
+    </div>
+}
+
+
+@*@{int count = 0;}
+ @foreach (var item in Model)
+        {
+                count++;
+        }
+        @{if(count>=1){
+        <h1>My Cards</h1>
+<table class="table table-bordered table-hover">
+    <thead class="bg-primary text-white">
+        <tr>
+            <th>
+                Card Number 
+            </th>
+            <th>
+                Card Type
+            </th>
+            <th>
+                Exp Date
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        
+    @foreach (var item in Model)
+        {
+                    <tr>
+                        <td>
+                            **** **** @Html.DisplayFor(modelItem => item.CardNumber)
+                        </td>
+                        <td>
+                            @item.CardType
+                        </td>
+                        <td>
+                            @item.CardExpMonth / @item.CardExpYear
+                        </td>
+                    </tr>
+        
+        }
+    </tbody>
+        </table>
+    }
+    else
+    {
+        <div class="cards">
+            <div class="cards-container">
+                             
+                <div class="cards-inner-container">
+                    <h1 class="no-card-head">You do not have any cards added!</h1>
+                    <a class="add-card-link" asp-action="Index" asp-controller="UserCards"
+               asp-route-token="@ViewBag.token">
+                    <button class="btn btn-info add-card-btn">
+                            <i class="fa-solid fa-square-plus"></i>
+                        Add Cards
+                    </button>
+                    </a>
+                </div>
+
+            </div>
+
+        </div>
+    }
+}*@

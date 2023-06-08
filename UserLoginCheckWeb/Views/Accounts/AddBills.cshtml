@@ -1,0 +1,67 @@
+﻿@model BillDetails
+@{
+    ViewData["Title"] = "Add Bills";
+    Layout = "~/Views/Shared/_DashboardLayout.cshtml";
+}
+<link rel="stylesheet" href="~/css/AddAccounts.css" />
+<link href='https://fonts.googleapis.com/css?family=Roboto:400,300,100' rel='stylesheet' type='text/css'>
+<div class="card mx-auto" style="width: 70%;">
+    <div class="card-body">
+        <div class="container">
+            <div class="Account">
+                <div class="card-body">
+                    <form asp-action="AddBills" asp-controller="Accounts" asp-route-token="@ViewBag.token" asp-route-accountID="@ViewBag.accountID" method="post" class="needs-validation" novalidate>
+                        <div class="form-group">
+                            <div class="form-row">
+                                <div class="col">
+                                    <label>Bill Type</label>
+                                    <select class="form-control" asp-for="BillType">
+                                        <option value="Electricity">Electricity</option>
+                                        <option value="Water">Water</option>
+                                        <option value="Mobile">Mobile</option>
+                                        <option value="DTH">DTH</option>
+                                        <option value="Gas">Gas</option>
+                                        <option value="Broadband">Broadband</option>
+                                        <option value="Metro">Metro</option>
+                                    </select>
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="form-row">
+                                <div class="col">
+
+                                    <label for="generation-date">Bill Generation Date:</label>
+                                    <input type="date" asp-for="BillGenerationDate" class="form-control" id="generation-date" placeholder="Bill Generation Date" required />
+
+                                </div>
+                                <div class="col">
+                                    <label for="event-date">Bill Due Date:</label>
+                                    <input type="date" asp-for="BillDueDate" class="form-control" id="due-date" placeholder="Bill Due Date" required />
+                                </div>
+
+
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="bill-amount">Bill Amount:</label>
+                            <input type="number" asp-for="BillAmount" class="form-control" id="bill-amount" placeholder="Bill Amount" required />
+                            <div class="invalid-feedback">
+                                Bill Amount can't be empty
+                            </div>
+                        </div>
+
+                        <br />
+                        <div class="form-group text-center">
+                            <input type="submit" value="Submit" class="btn btn-primary btn-user btn-block" />
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="~/js/CardValidations.js"></script>

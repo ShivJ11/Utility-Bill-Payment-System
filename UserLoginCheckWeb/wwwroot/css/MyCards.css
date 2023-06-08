@@ -1,0 +1,38 @@
+﻿.main-heading {
+    font-weight: bold;
+}
+
+.cards {
+    height: 70vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.add-card-link {
+    color: #fff;
+    text-decoration: none;
+}
+
+.add-card-link:hover, add-card-link:active {
+    color: #fff;
+    text-decoration: none;
+}
+
+.no-card-head {
+    font-weight: bold;
+    margin-bottom: 1.5rem;
+}
+
+.cards-inner-container {
+    text-align: center;
+}
+
+.cards-container {
+    display: flex;
+}
+
+.card-type-logo {
+    width: 70px; 
+    height: auto; 
+}

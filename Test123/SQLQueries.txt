@@ -1,0 +1,560 @@
+use UtilityBillPaymentDB
+
+create table users(userID int identity(100,1), uFirstName varchar(30) NOT NULL, uLastName varchar(30), uEmail varchar(50) NOT NULL, uPassword varchar(50), uContactNumber varchar(50)) 
+
+select * from users
+
+
+CREATE procedure utility_login
+(
+        @Email varchar(50),
+        @Password varchar(50)
+)
+as
+declare @status int
+if exists(select * from users where uEmail=@Email and uPassword=@Password)
+begin
+       set @status=1
+	   SELECT @status, userID, UFirstName, ULastName,  uEmail FROM users WHERE uEmail=@Email and uPassword=@Password
+end
+
+else
+begin
+       set @status=0
+	   SELECT @status
+end
+
+ALTER procedure [dbo].[utility_login]
+(
+        @Email varchar(50),
+        @Password varchar(50)
+)
+as
+declare @status int
+if exists(select * from users where uEmail=@Email and uPassword=@Password)
+begin
+       set @status=1
+	   SELECT @status as status, userID, UFirstName, ULastName,  uEmail FROM users WHERE uEmail=@Email and uPassword=@Password
+end
+
+else
+begin
+       set @status=0
+	   SELECT @status as status, null as userID, null as UFirstName, null as ULastName, null as UEmail
+end
+
+..............................................................................................................................................................................................................................
+
+SELECT * FROM users
+
+CREATE TABLE Cards(CardID int identity(1,1) primary key, CardName varchar(50), CardNumber varchar(50), CardType varchar(20),CardAmount numeric(18,2),userID int FOREIGN KEY REFERENCES users(userID))
+SELECT * FROM Cards
+
+CREATE TABLE Transactions(TransID int identity(1001,1) primary key, TransAmount numeric(18,2), TransMethod varchar(20),userID INT FOREIGN KEY REFERENCES users(userID), cardID INT FOREIGN KEY REFERENCES Cards(CardID));
+SELECT * FROM Transactions
+
+CREATE TABLE Bills(BillID int identity(1,1) primary key, BillName varchar(50), BillStatus varchar(20) , BillAmount numeric(18,2), userID int FOREIGN KEY REFERENCES users(userID))
+SELECT * FROM Bills
+
+ALTER procedure [dbo].[utility_register]
+(
+		@uFirstName varchar(30),
+		@uLastName varchar(30),
+		@uEmail varchar(50),
+		@uPassword varchar(50),
+		@uContactNumber varchar(50)
+)
+as
+declare @status int
+set @status=0
+begin
+		insert into users(uFirstName,uLastName,uEmail,uPassword,uContactNumber)
+		values (@uFirstName,@uLastName,@uEmail,@uPassword,@uContactNumber)
+		set @status=1
+		select @status as status
+end
+
+----------------------------------
+
+ALTER procedure [dbo].[utility_login]
+(
+        @Email varchar(50),
+        @Password varchar(50)
+)
+as
+declare @status int
+if exists(select * from users where uEmail=@Email and uPassword=@Password)
+begin
+       set @status=1
+	   SELECT @status as status, userID, UFirstName, ULastName,  uEmail,uContactNumber FROM users WHERE uEmail=@Email and uPassword=@Password
+end
+
+else
+begin
+       set @status=0
+	   SELECT @status as status, null as userID, null as UFirstName, null as ULastName, null as UEmail,null as uContactNumber
+end
+
+
+ALTER procedure [dbo].[utility_register]
+(
+		@uFirstName varchar(30),
+		@uLastName varchar(30),
+		@uEmail varchar(50),
+		@uPassword varchar(50),
+		@uContactNumber varchar(50)
+)
+as
+begin
+	declare @status int
+	set @status=0
+	declare @message varchar(20)
+	if exists
+	(
+		select * from users where uEmail = @uEmail
+	)
+	begin
+		set @status = 0
+		set @message = 'Email already exists'
+		select @status as status, @message as message
+	end
+	else
+	begin
+			insert into users(uFirstName,uLastName,uEmail,uPassword,uContactNumber)
+			values (@uFirstName,@uLastName,@uEmail,@uPassword,@uContactNumber)
+			set @status=1
+			set @message = 'User Registered'
+			select @status as status, @message as message
+	end
+end
+----------------------------------------------
+CREATE TABLE Cards(CardID int identity(1,1) primary key,   
+CardNumber int, 
+DefaultCard bit,
+userID int FOREIGN KEY REFERENCES users(userID))
+SELECT * FROM Cards
+
+-----------------------------------------
+create procedure card_details
+(
+		@CardNumber int,
+		@Defaultcard bit,
+		@userID int
+)
+as
+begin
+	declare @status int
+	set @status=0
+	declare @message varchar(20)
+	begin
+			insert into Cards(CardNumber,DefaultCard,userID)
+			values (@CardNumber,@DefaultCard,@userID)
+			set @status=1
+			set @message = 'Card Added'
+			select @status as status, @message as message
+	end
+end
+--------------------------------------------
+create procedure get_card_details
+(
+		@userID int
+)
+as 
+begin
+	declare @status int
+	set @status=0
+	declare @message varchar(20)
+	if exists(select * from cards where userID=@userID)
+	begin 
+		set @status=1
+		set @message='Success'
+		select @status as status,@message as message, CardNumber,DefaultCard from cards where userID=@userID
+	end
+	else
+	begin
+		set @status=0
+		set @message='No Card exist'
+		select @status as status,@message as message,null as CardNumber,null as DefaultCard
+	end
+end
+
+exec get_card_details @userID=101
+-------------------------------------------------------------------------
+create table feedback(MessageId int primary key identity(1,1), Message varchar(100), Subject varchar(50), Email varchar(50), userID int FOREIGN KEY REFERENCES users(userID))
+
+--------------------------------------------
+create procedure user_feedback
+(
+    @userID int,
+    @Subject varchar(50),
+    @Message varchar(100),
+    @Email varchar(50)
+    )
+AS
+declare @status int
+BEGIN
+    BEGIN TRY
+		SET NOCOUNT ON;
+		INSERT INTO feedback values(@Message, @Subject, @Email, @userID);
+		set @status=1
+		SELECT @status as Status, 'Feedback inserted Successfully' AS MESSAGE;
+    END TRY
+    BEGIN CATCH
+		set @status = 0
+		SELECT @status as Status, 'Some Error Occured' as MESSAGE
+    END CATCH
+END
+
+-----------------------------Cards Alterations-------------------------------------
+create table cards (CardID int identity(1,1) primary key, CardType varchar(max), CardNumber int, CardExpMonth int, CardExpYear int, userID int FOREIGN KEY REFERENCES users(userID)) 
+
+ALTER procedure [dbo].[card_details]
+(
+		@CardType varchar(max),
+		@CardNumber int,
+		@CardExpMonth int,
+		@CardExpYear int,
+		@userID int
+)
+as
+begin
+	declare @status int
+	set @status=0
+	declare @message varchar(20)
+	begin
+			insert into Cards(CardType, CardNumber, CardExpMonth, CardExpYear, userID)
+			values (@CardType,@CardNumber,@CardExpMonth,@CardExpYear,@userID)
+			set @status=1
+			set @message = 'Card Added'
+			select @status as status, @message as message
+	end
+end
+
+ALTER procedure [dbo].[get_card_details]
+(
+		@userID int
+)
+as 
+begin
+	declare @message varchar(20)
+	if exists(select * from cards where userID=@userID)
+	begin 
+		select CardType, CardNumber, CardExpMonth, CardExpYear, userID from cards where userID=@userID
+	end
+	else
+	begin
+		select null as CardType, null as CardNumber, null as CardExpMonth, null as CardExpYear, null as userID
+	end
+end
+
+
+-----------------------------------------Bills and Accounts tables------------------------------------------------------
+create table Accounts(AccountID int primary key identity(100,1), AccountNumber varchar(max), Zip varchar(max), AccountBalance numeric(18,2), AccountStatus int,userID int FOREIGN KEY REFERENCES users(userID))
+
+select * from Accounts
+
+create table Bills(BillID int primary key identity(1,1), AccountID int FOREIGN KEY REFERENCES Accounts(AccountID), BillGenerationDate varchar(max), ServiceFee numeric(18,0), BillDueDate varchar(max), BillAmount numeric(18,2), BillType varchar(max))
+
+select * from Bills
+
+------------------------------------------Insert SP bills and accounts----------------------------------------------------
+
+create procedure add_account
+(
+    @AccountNumber varchar(30),
+	@Zip varchar(30),
+    @AccountBalance numeric(10,2),
+    @AccountStatus int,
+	@userID int
+    )
+AS
+declare @status int
+BEGIN
+    BEGIN TRY
+        SET NOCOUNT ON;
+        INSERT INTO Accounts(AccountNumber,Zip,AccountBalance,AccountStatus,userID) values(@AccountNumber,@Zip, @AccountBalance, @AccountStatus,@userID);
+        set @status=1
+        SELECT @status as Status, 'Bill Info added Successfully' AS MESSAGE;
+    END TRY
+    BEGIN CATCH
+        set @status = 0
+        SELECT @status as Status, 'Some Error Occured' as MESSAGE
+    END CATCH
+END
+
+
+ ALTER procedure [dbo].[add_bill]
+(  
+	@AccountID int,
+    @BillGenerationDate varchar(30),
+	@ServiceFee numeric(18,0),
+    @BillDueDate varchar(30),
+    @BillAmount numeric(10,2),
+    @BillType varchar(20)
+    )
+AS
+declare @status int
+BEGIN
+    BEGIN TRY
+        SET NOCOUNT ON;
+        INSERT INTO Bills(AccountID,BillGenerationDate,ServiceFee,BillDueDate,BillAmount,BillType) values(@AccountID, @BillGenerationDate,@ServiceFee, @BillDueDate, @BillAmount,@BillType);
+        set @status=1
+        SELECT @status as Status, 'Bill Info added Successfully' AS MESSAGE;
+    END TRY
+    BEGIN CATCH
+        set @status = 0
+        SELECT @status as Status, 'Some Error Occured' as MESSAGE
+    END CATCH
+END
+------------------------------------------Get Details SP Bills-----------------------------------------------------------------------
+
+ALTER procedure [dbo].[get_bill_details]
+(
+		@AccountID int
+)
+as 
+begin
+	declare @message varchar(20)
+	if exists(select * from bills where AccountID=@AccountID)
+	begin 
+		select AccountID,BillGenerationDate,ServiceFee,BillDueDate,BillAmount,BillType from Bills where AccountID=@AccountID
+	end
+	else
+	begin
+		select null as AccountID, null as BillGenerationDate, null as ServiceFee, null as BillDueDate,null as BillAmount,null as BillType
+	end
+end
+
+------------------------------------------Get Accounts SP-----------------------------------------------------------------------
+
+CREATE procedure get_accounts
+(
+		@userID int
+)
+as 
+begin
+	declare @message varchar(20)
+	if exists(select * from accounts where userID = @userID)
+	begin 
+		select AccountNumber,Zip,AccountBalance,AccountStatus,userID from accounts where userID = @userID
+	end
+	else
+	begin
+		select null as AccountNumber, null as Zip, null as AccountBalance, null as AccountStatus, null as userID
+	end
+end
+
+--------------------------------------------------------------------------------------------------------
+ALTER procedure [dbo].[get_accounts]
+(
+		@userID int
+)
+as 
+begin
+	declare @message varchar(20)
+	if exists(select * from accounts where userID = @userID)
+	begin 
+		select AccountID,AccountNumber,Zip,AccountBalance,AccountStatus,userID from accounts where userID = @userID
+	end
+	else
+	begin
+		select null as AccountID,null as AccountNumber, null as Zip, null as AccountBalance, null as AccountStatus, null as userID
+	end
+end
+
+
+ALTER procedure [dbo].[get_bill_details]
+(
+		@AccountID int
+)
+as 
+begin
+	declare @message varchar(20)
+	if exists(select * from bills where AccountID=@AccountID)
+	begin 
+		select BillID,AccountID,BillGenerationDate,ServiceFee,BillDueDate,BillAmount,BillType from Bills where AccountID=@AccountID
+	end
+	else
+	begin
+		select null as BillID,null as AccountID, null as BillGenerationDate, null as ServiceFee, null as BillDueDate,null as BillAmount,null as BillType
+	end
+end
+
+------------------------------------------------------------------------------------------------------------------------------------
+
+alter table bills add BillStatus varchar(50)
+
+ALTER procedure [dbo].[add_bill]
+(  
+	@AccountID int,
+    @BillGenerationDate varchar(30),
+	@ServiceFee numeric(18,0),
+    @BillDueDate varchar(30),
+    @BillAmount numeric(10,2),
+    @BillType varchar(20)
+    )
+AS
+declare @status int
+BEGIN
+    BEGIN TRY
+        SET NOCOUNT ON;
+        INSERT INTO Bills(AccountID,BillGenerationDate,ServiceFee,BillDueDate,BillAmount,BillType,BillStatus) values(@AccountID, @BillGenerationDate,@ServiceFee, @BillDueDate, @BillAmount,@BillType,'Pending');
+        set @status=1
+        SELECT @status as Status, 'Bill Info added Successfully' AS MESSAGE;
+    END TRY
+    BEGIN CATCH
+        set @status = 0
+        SELECT @status as Status, 'Some Error Occured' as MESSAGE
+    END CATCH
+END
+
+ALTER procedure [dbo].[get_bill_details]
+(
+		@AccountID int
+)
+as 
+begin
+	declare @message varchar(20)
+	if exists(select * from bills where AccountID=@AccountID)
+	begin 
+		select BillID,AccountID,BillGenerationDate,ServiceFee,BillDueDate,BillAmount,BillType,BillStatus from Bills where AccountID=@AccountID
+	end
+	else
+	begin
+		select null as BillID,null as AccountID, null as BillGenerationDate, null as ServiceFee, null as BillDueDate,null as BillAmount,null as BillType, null as BillStatus
+	end
+end
+
+
+-----------------------------------------------------------Account Queries----------------------------------------------------------------------------
+drop table Bills
+drop table Accounts
+
+create table Accounts(AccountID int primary key identity(100,1), AccountNumber varchar(max), Zip varchar(max), DueDate varchar(50), DueAmount numeric(18,2), AccountType varchar(20), AccountStatus int,userID int FOREIGN KEY REFERENCES users(userID))
+select * from Accounts
+
+ALTER procedure [dbo].[add_account]
+(
+    @AccountNumber varchar(30),
+	@Zip varchar(30),
+    @DueDate varchar(50),
+    @DueAmount numeric(18,2),
+	@AccountType varchar(20),
+	@AccountStatus int,
+	@userID int
+)
+AS
+declare @status int
+BEGIN
+    BEGIN TRY
+        SET NOCOUNT ON;
+        INSERT INTO Accounts
+		(
+			AccountNumber,
+			Zip,
+			DueDate,
+			DueAmount,
+			AccountType,
+			AccountStatus,
+			userID
+		) values
+		(
+			@AccountNumber,
+			@Zip,
+			@DueDate,
+			@DueAmount,
+			@AccountType,
+			@AccountStatus,
+			@userID
+		)
+        set @status=1
+        SELECT @status as Status, 'Bill Info added Successfully' AS MESSAGE;
+    END TRY
+    BEGIN CATCH
+        set @status = 0
+        SELECT @status as Status, 'Some Error Occured' as MESSAGE
+    END CATCH
+END
+
+exec add_account
+	@AccountNumber = '12345',
+	@Zip = '12345',
+	@DueDate = '12-05-23',
+	@DueAmount = 1500,
+	@AccountType = 'Electricity',
+	@AccountStatus = 0,
+	@userID = 100
+
+select * from accounts
+
+ALTER procedure [dbo].[get_accounts]
+(
+		@userID int
+)
+as 
+begin
+	declare @message varchar(20)
+	if exists(select * from accounts where userID = @userID)
+	begin 
+		select 
+		AccountNumber,
+		Zip,
+		DueDate,
+		DueAmount,
+		AccountType,
+		AccountStatus,
+		userID
+		from accounts where userID = @userID
+	end
+	else
+	begin
+		select 
+		null as AccountNumber,
+		null as Zip,
+		null as DueDate,
+		null as DueAmount,
+		null as AccountType,
+		null as AccountStatus,
+		null as userID
+	end
+end
+
+exec get_accounts @userID = 100
+---------------------------------------------Card Details by Card ID--------------------------------------------------------------------------
+create procedure get_card_details_by_cardID
+(
+		@CardID int
+)
+as 
+begin
+	declare @message varchar(20)
+	if exists(select * from cards where CardID=@CardID)
+	begin 
+		select CardType, CardNumber, CardExpMonth, CardExpYear,userID from cards where CardID=@CardID
+	end
+	else
+	begin
+		select null as CardType, null as CardNumber, null as CardExpMonth, null as CardExpYear
+	end
+end
+exec get_card_details_by_cardID @CardID=1
+
+
+----------------------------------------------------update acc status------------------------------------------------------------------------
+
+create procedure update_account_status
+(
+        @AccountID int
+)
+as
+declare @status int
+if exists(select * from Accounts where AccountID=@AccountID )
+begin
+       set @status=1
+	  update Accounts set AccountStatus=1 where AccountID=@AccountID
+end
+
+else
+begin
+       set @status=0
+end

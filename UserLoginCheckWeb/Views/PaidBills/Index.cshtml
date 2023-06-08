@@ -1,0 +1,158 @@
+﻿@model List<CustomerPortal.Models.AccountDetails>
+@{
+    ViewData["Title"] = "Paid Bills";
+    Layout = "~/Views/Shared/_DashboardLayout.cshtml";
+}
+<link rel="stylesheet" href="~/css/Reciept.css" />
+<link href='https://fonts.googleapis.com/css?family=Roboto:400,300,100' rel='stylesheet' type='text/css'>
+
+
+@*@foreach (var item in Model)
+{
+    count++;
+}*@
+@{
+    if (Model.Count > 0)
+    {
+        <h3>Paid Bills</h3>
+        <form method="post">
+            <table class="table table-striped table-bordered table-hover">
+                <thead class="bg-primary text-white">
+                    <tr>
+                        <th>
+                            Account Number
+                        </th>
+                        <th>
+                            Zip
+                        </th>
+                        <th>
+                            Due Date
+                        </th>
+                        <th>
+                            Due Amount
+                        </th>
+                        <th>
+                            Type
+                        </th>
+                        <th>
+                            Status
+                        </th>
+                        <th>
+                            Reciept
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        if (item.AccountStatus == true)
+                        {
+                            <tr>
+                                <td>
+                                    @item.AccountNumber
+                                </td>
+                                <td>
+                                    @item.Zip
+                                </td>
+                                <td>
+                                    @item.DueDate
+                                </td>
+                                <td class="due-amount">
+                                    @item.DueAmount
+                                </td>
+                                <td>
+                                    @item.AccountType
+                                </td>
+                                <td>
+                                    @if (item.AccountStatus == false)
+                                    {
+                                        <span class="badge bg-warning text-dark">Pending</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-success">Paid</span>
+                                    }
+                                </td>
+                                <td>
+                                    <a asp-action="Reciept" asp-controller="PaidBills" asp-route-token="@ViewBag.token" asp-route-accID="@item.AccountID">Reciept</a>
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </form>
+    }
+    else
+    {
+        <h1>No Paid Bills</h1>
+    }
+}
+
+@*<div class="card mx-auto" style="width: 70%;">
+    <div class="card-body">
+        <div class="container">
+            <div class="Account">
+                <div class="card-body">
+                    <form asp-action="AddAccounts" asp-controller="Accounts">
+                        <div class="form-group">
+                            <label for="checkout_Account_number">Bill ID</label><br />
+                            <div>
+                                <input type="number"  class="form-control stripe_account_number" id="checkout_bill_id" placeholder="Bill ID" required />
+                                <div class="invalid-feedback">
+                                    Bill ID can't be empty
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="form-group">
+                        <div class="form-row">
+                            <div class="col">
+                                <label>Bill Type</label>
+                                <select class="form-control">
+                                    <option value="Electricity">Electricity</option>
+                                    <option value="Water">Water</option>
+                                    <option value="Mobile">Mobile</option>
+                                    <option value="DTH">DTH</option>
+                                    <option value="Gas">Gas</option>
+                                    <option value="Broadband">Broadband</option>
+                                    <option value="Metro">Metro</option>
+                                </select>
+                            </div>
+
+                        </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="form-row">
+                                <div class="col">
+
+                                    <label for="generation-date">Bill Generation Date:</label>
+                                    <input type="date" id="generation-date" name="generation-date">
+
+                                </div>
+                                <div class="col">
+                                    <label for="event-date">Bill Due Date:</label>
+                                    <input type="date" id="due-date" name="due-date">
+                                </div>
+
+
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="bill-amount">Bill Amount:</label>
+                            <input type="number" id="bill-amount" name="bill-amount" min="0" step="1">
+                        </div>
+
+                        <br />
+                        <div class="form-group text-center">
+                            <input type="submit" value="Submit" class="btn btn-primary btn-user btn-block" />
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>*@
+
+<script src="~/js/checkboxsum.js"></script>

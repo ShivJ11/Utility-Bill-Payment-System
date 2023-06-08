@@ -1,0 +1,113 @@
+﻿@model CustomerPortal.Models.CardDetails
+@{
+    ViewData["Title"] = "Add Cards";
+    Layout = "~/Views/Shared/_DashboardLayout.cshtml";
+}
+<link rel="stylesheet" href="~/css/UserCards.css" />
+<link href='https://fonts.googleapis.com/css?family=Roboto:400,300,100' rel='stylesheet' type='text/css'>
+
+<div class="loadingDiv-parent">
+    <div class="loadingDiv">
+        <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
+                <span class="sr-only">Loading...</span>
+        </div>
+    </div>
+</div>
+
+<div class="main-container container">
+    <!--Page Loader-->
+    @*<div class="loadingDiv-parent">
+        <div class="loadingDiv">
+            <div class="card border-primary">
+                <div class="card-header">
+                    <h3 class="panel-title">Loading ... Please Wait</h3>
+                </div>
+            </div>
+        </div>
+    </div>*@
+    <!--Page Loader End-->
+
+    <div class="card mx-auto" style="width: 60%;">
+       <div class="card-body">
+            <form asp-action="AddCards" asp-controller="UserCards" asp-route-token="@ViewBag.token" class="needs-validation" novalidate>
+                <div class="form-group">
+                    <label for="checkout_card_number">Card Type</label><br />
+                    <input type="hidden" id="CardType" asp-for="CardType" name="CardType" value="">
+                    <ul class="card_logos">
+                        <li class="card_visa">Visa</li>
+                        <li class="card_mastercard">Mastercard</li>
+                        <li class="card_amex">American Express</li>
+                        <li class="card_discover">Discover</li>
+                        <li class="card_jcb">JCB</li>
+                        <li class="card_diners">Diners Club</li>
+                    </ul>
+                    <div>
+                        <input type="number" asp-for="CardNumber" class="form-control stripe_card_number" id="checkout_card_number" placeholder="Card Number" required />
+                        <div class="invalid-feedback">
+                            Card Number can't be empty
+                        </div>
+                    </div>
+
+                </div>
+                <div class="form-group">
+                    <div class="form-row">
+                        <div class="col">
+                            <label>Month</label>
+                            <select class="form-control" asp-for="CardExpMonth">
+                                <option value="1">January</option>
+                                <option value="2">February</option>
+                                <option value="3">March</option>
+                                <option value="4">April</option>
+                                <option value="5">May</option>
+                                <option value="6">June</option>
+                                <option value="7">July</option>
+                                <option value="8">August</option>
+                                <option value="9">September</option>
+                                <option value="10">October</option>
+                                <option value="11">November</option>
+                                <option value="12">December</option>
+                            </select>
+                        </div>
+                        <div class="col">
+                            <label>Year</label>
+                            <select class="form-control" asp-for="CardExpYear">
+                                <option value="2016">2016</option>
+                                <option value="2017">2017</option>
+                                <option value="2018">2018</option>
+                                <option value="2019">2019</option>
+                                <option value="2020">2020</option>
+                                <option value="2021">2021</option>
+                                <option value="2022">2022</option>
+                                <option value="2023">2023</option>
+                                <option value="2024">2024</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="cvv">CVV</label>                    
+                    <input id="cvv" type="password" class="form-control" placeholder="CVV" required />
+                    <div class="invalid-feedback">
+                        CVV can't be empty
+                    </div>
+                </div>
+                <div class="form-check">
+                    <input type="checkbox"  class="form-check-input"  id="exampleCheck1">
+                    <label class="form-check-label" for="exampleCheck1">Set as Default</label>
+                </div>
+                <br />
+                @if (TempData["Error"] != null)
+                {
+                    <div class="text-center alert alert-danger" role="alert">
+                        @TempData["Error"]
+                    </div>
+                }
+                <div class="form-group text-center">
+                    <input type="submit" value="Submit" class="btn btn-primary btn-user btn-block" />
+                </div>
+            </form>
+       </div>
+   </div>
+</div>
+
+<script src="~/js/CardValidations.js"></script>

@@ -1,0 +1,85 @@
+﻿@using CustomerPortal.Common_code;
+@model List<CustomerPortal.Models.TransactionDetails>
+
+@{
+    ViewData["Title"] = "Transaction History";
+    Layout = "~/Views/Shared/_DashboardLayout.cshtml";
+}
+
+
+@{
+    if (Model.Count > 0)
+    {
+        <h1>Transaction History</h1>
+        <table class="table table-bordered table-hover">
+            <thead class="bg-primary text-white">
+                <tr>
+                    <th>
+                        Transaction ID
+                    </th>
+                    <th>
+                        Account ID
+                    </th>
+                    <th>
+                        Payment Date
+                    </th>
+                    <th>
+                        Card ID
+                    </th>
+                    <th>
+                        Card Type
+                    </th>
+                    <th>
+                        Card Number
+                    </th>
+                    <th>
+                        Transaction Amount
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>
+                            @item.TransID
+                        </td>
+                        <td>
+                            @item.AccountID
+                        </td>
+                        <td>
+                            @item.PaymentDate
+                        </td>
+                        <td>
+                            @item.CardID
+                        </td>
+                        <td>
+                            @item.CardType
+                        </td>
+                        <td>
+                            @item.CardNumber
+                        </td>
+                        <td>
+                          @item.TransAmount
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <div class="accounts">
+            <div class="accounts-container">
+
+                <div class="accounts-inner-container">
+                    <h1 class="no-account-head">No Transaction History Available</h1>
+                    
+                </div>
+
+            </div>
+
+        </div>
+    }
+}

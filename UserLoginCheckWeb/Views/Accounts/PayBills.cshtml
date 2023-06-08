@@ -1,0 +1,120 @@
+﻿@model List<CustomerPortal.Models.CardDetails>
+@{
+    ViewData["Title"] = "Select Cards";
+    Layout = "~/Views/Shared/_DashboardLayout.cshtml";
+}
+<link rel="stylesheet" href="~/css/MyCards.css" />
+
+@*<div class="cards">
+    <div class="cards-container">
+
+        <div class="cards-inner-container">
+            <h1 class="no-card-head">You do not have any cards added!</h1>
+            <a class="add-card-link" asp-action="Index" asp-controller="UserCards"
+               asp-route-token="@ViewBag.token">
+                <button class="btn btn-info add-card-btn">
+                    <i class="fa-solid fa-square-plus"></i>
+                    Add Cards
+                </button>
+            </a>
+        </div>
+    </div>
+</div>*@
+
+
+<h3>SELECT PAYMENT METHOD</h3>
+@if (Model.Count > 0)
+{
+    <form asp-action="Checkout" asp-controller="Accounts" asp-route-token="@ViewBag.token" method="post" id="payBillsForm">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Select</th>
+                <th>CardID</th>
+                <th scope="col">Method</th>
+                <th scope="col">Expires</th>
+
+
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var card in Model)
+            {
+                <tr>
+                    <td>
+                        <input type="checkbox" name="selectedCards" value="@card.CardID" />
+                    </td>
+                    <td class="card-id">@card.CardID</td>
+                    <td scope="row"><img class="card-type-logo" src="@Url.Content(card.Path)" /> **** **** **** @card.CardNumber</td>
+                    <td>@card.CardExpMonth/@card.CardExpYear</td>
+                </tr>
+            }
+
+
+        </tbody>
+    </table>
+        <input type="hidden" name="accountId" value="@TempData["AccountID"]" />
+        <input type="hidden" name="dueAmount" value="@TempData["DueAmount"]" />
+        <input type="submit" value="Pay Bills" class="btn btn-primary" id="payButton" />
+    </form>
+}
+else
+{
+    <div class="cards">
+        <div class="cards-container">
+            <div class="cards-inner-container">
+                <h1 class="no-card-head">You do not have any cards added!</h1>
+                <a class="add-card-link" asp-action="Index" asp-controller="UserCards"
+               asp-route-token="@ViewBag.token">
+                    <button class="btn btn-info add-card-btn">
+                        <i class="fa-solid fa-square-plus"></i>
+                        Add Cards
+                    </button>
+                </a>
+            </div>
+        </div>
+    </div>
+}
+
+<script>
+    $(document).ready(function () {
+        $('#payBillsForm').submit(function (event) {
+            event.preventDefault(); // Prevent the default form submission
+
+            var selectedCards = $('input[name="selectedCards"]:checked');
+
+            if (selectedCards.length > 0) {
+                var billInfo = {
+                    CardID: selectedCards.closest('tr').find('.card-id').text(),
+                    AccountID: '@TempData["AccountID"]',
+                    DueAmount: '@TempData["DueAmount"]'
+                };
+
+                $('<input>').attr({
+                    type: 'hidden',
+                    name: 'billInfo.CardID',
+                    value: billInfo.CardID
+                }).appendTo('#payBillsForm');
+
+                $('<input>').attr({
+                    type: 'hidden',
+                    name: 'billInfo.AccountID',
+                    value: billInfo.AccountID
+                }).appendTo('#payBillsForm');
+
+                $('<input>').attr({
+                    type: 'hidden',
+                    name: 'billInfo.DueAmount',
+                    value: billInfo.DueAmount
+                }).appendTo('#payBillsForm');
+
+                // Submit the form with the updated hidden fields
+                $('#payBillsForm').unbind('submit').submit();
+            } else {
+                // Handle the case when no bill is selected
+                alert('Please select at least one bill.');
+            }
+        });
+    });
+</script>
+
